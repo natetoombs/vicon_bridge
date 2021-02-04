@@ -391,7 +391,6 @@ private:
 //      time_log <<"timings: dt="<<diff<<" fps=" <<fps;
 //      time_log_.push_back(time_log.str());
 //      last_time = now_time;
-
       bool was_new_frame = process_frame();
       ROS_WARN_COND(!was_new_frame, "grab frame returned false");
 
@@ -414,7 +413,6 @@ private:
   {
     static ros::Time lastTime;
     Output_GetFrameNumber OutputFrameNum = msvcbridge::GetFrameNumber();
-
     //frameCount++;
     //ROS_INFO_STREAM("Grabbed a frame: " << OutputFrameNum.FrameNumber);
     int frameDiff = 0;
@@ -422,6 +420,7 @@ private:
     {
       frameDiff = OutputFrameNum.FrameNumber - lastFrameNumber;
       frameCount += frameDiff;
+      
       if ((frameDiff) > 1)
       {
         droppedFrameCount += frameDiff;
@@ -431,7 +430,6 @@ private:
       }
     }
     lastFrameNumber = OutputFrameNum.FrameNumber;
-
     if (frameDiff == 0)
     {
       return false;
@@ -440,12 +438,10 @@ private:
     {
       freq_status_.tick();
       ros::Duration vicon_latency(msvcbridge::GetLatencyTotal().Total);
-
       if(publish_tf_ || broadcast_tf_)
       {
         process_subjects(now_time - vicon_latency);
       }
-
       if(publish_markers_)
       {
         process_markers(now_time - vicon_latency, lastFrameNumber);
@@ -465,7 +461,6 @@ private:
     std::vector<tf::StampedTransform, std::allocator<tf::StampedTransform> > transforms;
     geometry_msgs::TransformStampedPtr pose_msg(new geometry_msgs::TransformStamped);
     static unsigned int cnt = 0;
-
     for (unsigned int i_subjects = 0; i_subjects < n_subjects; i_subjects++)
     {
 
@@ -475,11 +470,9 @@ private:
       for (unsigned int i_segments = 0; i_segments < n_segments; i_segments++)
       {
         segment_name = msvcbridge::GetSegmentName(subject_name, i_segments).SegmentName;
-
         Output_GetSegmentGlobalTranslation trans = msvcbridge::GetSegmentGlobalTranslation(subject_name, segment_name);
         Output_GetSegmentGlobalRotationQuaternion quat = msvcbridge::GetSegmentGlobalRotationQuaternion(subject_name,
                                                                                                         segment_name);
-
         if (trans.Result == Result::Success && quat.Result == Result::Success)
         {
           if (!trans.Occluded && !quat.Occluded)
@@ -538,7 +531,7 @@ private:
 
     if(broadcast_tf_)
     {
-      tf_broadcaster_.sendTransform(transforms);
+      //tf_broadcaster_.sendTransform(transforms); //FIXME
     }
     cnt++;
   }
