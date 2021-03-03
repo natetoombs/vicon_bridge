@@ -4,5 +4,8 @@
 		<!--param name="datastream_hostport" value="192.168.0.13:801" type="str" /-->
 		<param name="datastream_hostport" value="192.168.78.11:801" type="str" />
 		<param name="tf_ref_frame_id" value="/world" type="str" />
-		</node>
+	</node>
+
+	<node pkg="vicon_bridge" type="enu2ned.py" name="enu2ned" />
+	
 </launch>
