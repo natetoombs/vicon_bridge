@@ -41,28 +41,28 @@ class ENU2NED():
         q_z = enu_msg.transform.rotation.z
         q_w = enu_msg.transform.rotation.w
 
-        [w, x, y, z] = self.quaternion_multiply(self.rotation, [q_w, q_x, q_y, q_z])
+        # [w, x, y, z] = self.quaternion_multiply(self.rotation, [q_w, q_x, q_y, q_z])
 
-        # Create ned_msg
-        self.ned_msg.header = enu_msg.header
-        # Change ENU positions to NED
-        self.ned_msg.pose.position.x = enu_msg.transform.translation.y
-        self.ned_msg.pose.position.y = enu_msg.transform.translation.x
-        self.ned_msg.pose.position.z = -enu_msg.transform.translation.z
-        # Use rotated quaternion
-        self.ned_msg.pose.orientation.x = x
-        self.ned_msg.pose.orientation.y = y
-        self.ned_msg.pose.orientation.z = z
-        self.ned_msg.pose.orientation.w = w
+        # # Create ned_msg
+        # self.ned_msg.header = enu_msg.header
+        # # Change ENU positions to NED
+        # self.ned_msg.pose.position.x = enu_msg.transform.translation.y
+        # self.ned_msg.pose.position.y = enu_msg.transform.translation.x
+        # self.ned_msg.pose.position.z = -enu_msg.transform.translation.z
+        # # Use rotated quaternion
+        # self.ned_msg.pose.orientation.x = x
+        # self.ned_msg.pose.orientation.y = y
+        # self.ned_msg.pose.orientation.z = z
+        # self.ned_msg.pose.orientation.w = w
 
 
-        # # Convert to Euler
-        # [enu_x, enu_y, enu_z] = self.Quaternion2Euler(q_w, q_x, q_y, q_z)
+        # Convert to Euler
+        [enu_x, enu_y, enu_z] = self.Quaternion2Euler(q_w, q_x, q_y, q_z)
         
-        # # Change from ENU to NED
-        # ned_x = enu_y
-        # ned_y = enu_x
-        # ned_z = -enu_z
+        # Change from ENU to NED
+        ned_x = enu_y
+        ned_y = enu_x
+        ned_z = -enu_z
 
         # # ### For testing: print euler angles
         # # euler_msg = PoseStamped()
@@ -71,24 +71,24 @@ class ENU2NED():
         # # euler_msg.pose.orientation.z = ned_z
         # # self.ned_euler_pub.publish(euler_msg)
 
-        # # Convert to Quaternion
-        # [w, x, y, z] = self.Euler2Quaternion(ned_x, ned_y, ned_z)
-        # q_ned = [x, y, z, w]
+        # Convert to Quaternion
+        [w, x, y, z] = self.Euler2Quaternion(ned_x, ned_y, ned_z)
+        q_ned = [x, y, z, w]
 
         # ### Just switch axes? Test
         # # q_ned = [q_y, q_x, -q_z, q_w]
         
-        # # Create ned_msg
-        # self.ned_msg.header = enu_msg.header
-        # # Change ENU positions to NED
-        # self.ned_msg.pose.position.x = enu_msg.transform.translation.y
-        # self.ned_msg.pose.position.y = enu_msg.transform.translation.x
-        # self.ned_msg.pose.position.z = -enu_msg.transform.translation.z
-        # # Use rotated quaternion
-        # self.ned_msg.pose.orientation.x = q_ned[0]
-        # self.ned_msg.pose.orientation.y = q_ned[1]
-        # self.ned_msg.pose.orientation.z = q_ned[2]
-        # self.ned_msg.pose.orientation.w = q_ned[3]
+        # Create ned_msg
+        self.ned_msg.header = enu_msg.header
+        # Change ENU positions to NED
+        self.ned_msg.pose.position.x = enu_msg.transform.translation.y
+        self.ned_msg.pose.position.y = enu_msg.transform.translation.x
+        self.ned_msg.pose.position.z = -enu_msg.transform.translation.z
+        # Use rotated quaternion
+        self.ned_msg.pose.orientation.x = q_ned[0]
+        self.ned_msg.pose.orientation.y = q_ned[1]
+        self.ned_msg.pose.orientation.z = q_ned[2]
+        self.ned_msg.pose.orientation.w = q_ned[3]
 
         # Publish message
         self.ned_pub.publish(self.ned_msg)
